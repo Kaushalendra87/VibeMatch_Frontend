@@ -204,8 +204,8 @@ export function MatchesPage() {
             // The page we asked for, so the highlight cannot disagree
             // with the rows it produced.
             page={page}
-            totalPages={matches.data.totalPages}
-            count={matches.data.count}
+            totalPages={matches.data?.totalPages ?? 1}
+            count={matches.data?.count ?? 0}
             onPageChange={setPage}
             className="mt-6"
           />
