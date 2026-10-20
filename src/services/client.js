@@ -28,7 +28,7 @@ import { withRefreshLease } from './tabBus'
 const CSRF_COOKIE = 'csrftoken'
 const CSRF_HEADER = 'X-CSRFToken'
 
-export const API_BASE_URL = '/api'
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://vibematch-api-c6w0.onrender.com'
 
 /**
  * Endpoints that must never trigger the refresh-and-replay path.
