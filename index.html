@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="VibeMatch — meet people who actually match." />
+    <title>VibeMatch</title>
+
+    <!--
+      The meeting-arcs mark. SVG only: it is one shape with two colours, so
+      a raster fallback would cost more than it buys, and every browser
+      this app targets renders SVG favicons.
+
+      `theme-color` matches the tile so mobile browser chrome continues the
+      brand instead of framing it in grey.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#9d4e59" />
+
+    <!--
+      Typography.
+
+      Two families: Fraunces for a small number of user-facing headings and
+      Inter for everything else, including the whole admin console. Both are
+      variable, so this is two files rather than the eight a static family
+      would need, and `display=swap` means text paints immediately in the
+      fallback rather than holding a blank frame.
+
+      **Served from the Google Fonts CDN, deliberately.** Nothing lands in
+      the bundle and there is no build step. The trade is that the browser
+      opens a connection to a third party on first load, which is a
+      privacy consideration for some deployments — so if this app is ever
+      shipped somewhere that matters, swap these two tags for self-hosted
+      files (`@fontsource-variable/fraunces` and `.../inter`) and change
+      nothing else: no component names a font directly, they all resolve
+      through `fontFamily` in `tailwind.config.js`.
+
+      The preconnects are not optional. Without them the browser only
+      discovers `fonts.gstatic.com` after parsing the stylesheet, which
+      serialises two round trips before the first glyph.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400..700&display=swap"
+    />
+
+    <script>
+      // Applied before first paint so a dark-mode user never sees a white
+      // flash. Kept inline and dependency-free for that reason; the React
+      // theme context reads the same key.
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('vibematch.theme')
+          var dark =
+            stored === 'dark' ||
+            (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {
+          /* private mode — fall through to light */
+        }
+      })()
+    </script>
+  </head>
+  <body class="h-full">
+    <div id="root" class="h-full"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

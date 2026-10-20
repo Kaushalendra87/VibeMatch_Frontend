@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * The component layer.
+ *
+ * These are the classes pages are meant to reach for. Anything a page
+ * needs more than twice belongs here rather than in a utility string, and
+ * the reason is not brevity — it is that a hand-typed utility string
+ * drifts. The app had grown four different page-title treatments, three
+ * section-heading sizes and four separately-built alert panels, none of
+ * which was a decision anybody made.
+ *
+ * So the names below are *roles*, not styles: `heading-page` is what a
+ * page title is, `alert-warning` is what a caution is. A page that wants
+ * a different look has to argue with the token, which is exactly the
+ * friction that was missing.
+ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    /* Warm off-white rather than `slate-50`, which is faintly blue and
+       reads as cold beside a warm accent. */
+    @apply bg-sand-50 font-sans text-slate-900 antialiased;
+    @apply dark:bg-sand-950 dark:text-slate-100;
+  }
+
+  /* Tight tracking on headings is what makes a large type scale look
+     deliberate rather than merely big. Body copy keeps normal tracking —
+     tightening a paragraph costs legibility. */
+  h1,
+  h2,
+  h3 {
+    @apply tracking-tight;
+    /* `text-balance` stops a two-word orphan on a wrapped title, which is
+       the single most common way a heading looks accidental. */
+    text-wrap: balance;
+  }
+
+  /* A visible focus ring on every interactive element. Tailwind's default
+     outline reset is removed by preflight, and keyboard users need it back. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+    @apply ring-offset-sand-50 dark:ring-offset-sand-950;
+  }
+
+  /* Respect the OS setting. Motion is decorative everywhere it is used —
+     nothing here conveys state through movement alone. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ── Typography roles ─────────────────────────────────────────────── */
+
+  /**
+   * A page title, sans.
+   *
+   * The default, and what the admin console uses throughout: a moderator
+   * scanning a queue wants neutral, information-first type, not editorial
+   * voice. User-facing pages use `heading-display` instead.
+   */
+  .heading-page {
+    @apply text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100;
+  }
+
+  /**
+   * A page title in the display serif.
+   *
+   * Used for a small number of user-facing headings — Discover, Matches,
+   * the auth screens, a profile's name. This is the one thing that keeps
+   * the product from reading as a dashboard, so it is spent sparingly: a
+   * serif on every heading is a costume, on a few it is a voice.
+   *
+   * Deliberately *not* used in admin. See `heading-page`.
+   */
+  .heading-display {
+    @apply heading-page font-display font-semibold;
+  }
+
+  /**
+   * A section heading inside a panel or card.
+   *
+   * One size for both halves of the app. The dashboard had settled on
+   * `text-base` and the admin console on `text-sm` for the same job, which
+   * made two products out of one.
+   */
+  .heading-section {
+    @apply text-base font-semibold text-slate-900 dark:text-slate-100;
+  }
+
+  /**
+   * The small uppercase label above a group.
+   *
+   * Existed in four variants (`text-xs`/`text-sm`, `font-medium`/
+   * `font-semibold`, `slate-400`/`slate-500`) across eight files. The
+   * differences were not meaningful.
+   *
+   * `slate-600`, not the `slate-400`/`slate-500` the old variants used.
+   * At `text-xs` the lighter steps land at 4.46:1 on the page background —
+   * under the 4.5:1 threshold, and worse in practice because uppercase
+   * letterforms carry less shape to recognise. The step that passes is
+   * also the better-looking one: this label's hierarchy already comes
+   * from being small, uppercase and letter-spaced, so making it faint as
+   * well was buying a contrast failure to buy nothing.
+   */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-600;
+    @apply dark:text-slate-400;
+  }
+
+  /* ── Surfaces ─────────────────────────────────────────────────────── */
+
+  .card {
+    @apply rounded-2xl border border-sand-200 bg-white shadow-soft;
+    @apply dark:border-sand-800 dark:bg-sand-900;
+  }
+
+  /**
+   * A card that lifts on hover.
+   *
+   * `-translate-y-1` plus a shadow is the whole gesture: the card rises
+   * toward the cursor. Kept as its own class rather than applied ad hoc
+   * so every liftable surface moves the same distance at the same speed —
+   * two cards rising different amounts in one grid looks broken.
+   */
+  .card-interactive {
+    @apply card transition-all duration-base ease-smooth;
+    @apply hover:-translate-y-1 hover:border-sand-300 hover:shadow-lift;
+    @apply dark:hover:border-sand-700;
+  }
+
+  /**
+   * A panel that floats over content — menus, popovers, modals.
+   *
+   * Distinct from `.card` because a dropdown needs an edge that survives
+   * dark mode, where a shadow against a near-black page is invisible. The
+   * `overlay` shadow carries a hairline ring for exactly that reason.
+   */
+  .surface-overlay {
+    @apply rounded-2xl border border-sand-200 bg-white shadow-overlay;
+    @apply dark:border-sand-700 dark:bg-sand-800;
+  }
+
+  /**
+   * A translucent bar for sticky headers.
+   *
+   * The *only* remaining use of backdrop blur, and a functional one: a
+   * sticky header over a scrolling feed has to let content pass beneath it
+   * without a hard band. Everywhere else the app used to blur — cards,
+   * badges, overlays — it was decoration competing with the photography,
+   * and it is gone.
+   */
+  .surface-bar {
+    @apply border-sand-200 bg-sand-50/85 backdrop-blur;
+    @apply dark:border-sand-800 dark:bg-sand-950/85;
+  }
+
+  /* ── Alerts ───────────────────────────────────────────────────────── */
+
+  /**
+   * One shape for all three, differing only in colour.
+   *
+   * The app had built a red error panel four times and an amber warning
+   * panel four times at three different corner radii. They are the same
+   * component; only the message changes.
+   */
+  .alert {
+    @apply rounded-xl border p-3 text-sm;
+  }
+
+  .alert-error {
+    @apply alert border-red-200 bg-red-50 text-red-700;
+    @apply dark:border-red-900 dark:bg-red-950/40 dark:text-red-300;
+  }
+
+  .alert-warning {
+    @apply alert border-amber-200 bg-amber-50 text-amber-800;
+    @apply dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200;
+  }
+
+  .alert-success {
+    @apply alert border-sage-200 bg-sage-50 text-sage-700;
+    @apply dark:border-sage-900 dark:bg-sage-950/40 dark:text-sage-300;
+  }
+
+  .alert-info {
+    @apply alert border-sand-200 bg-sand-50 text-slate-700;
+    @apply dark:border-sand-700 dark:bg-sand-900 dark:text-slate-300;
+  }
+
+  /* ── Controls ─────────────────────────────────────────────────────── */
+
+  .input {
+    @apply w-full rounded-xl border border-sand-300 bg-white px-3 py-2 text-sm;
+    @apply placeholder:text-slate-400;
+    @apply transition-colors duration-fast;
+    @apply focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500;
+    @apply disabled:cursor-not-allowed disabled:bg-sand-100;
+    @apply dark:border-sand-700 dark:bg-sand-900 dark:text-slate-100;
+    @apply dark:disabled:bg-sand-800;
+  }
+
+  .label {
+    @apply mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2;
+    @apply text-sm font-medium transition-all duration-base ease-smooth;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /**
+   * The primary action.
+   *
+   * `brand-600`, not `brand-500`: 600 is the lightest step that carries
+   * white text at 5.7:1. 500 is the identity colour and is reserved for
+   * borders, rings and dots.
+   *
+   * The hover is a colour shift and a 0.5px rise — no glow. A glowing
+   * button was the loudest piece of template chrome in the app, and on a
+   * page whose job is to show faces it pulled the eye to the furniture.
+   */
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-soft;
+    @apply hover:-translate-y-0.5 hover:bg-brand-700;
+    @apply active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply btn border border-sand-300 bg-white text-slate-700;
+    @apply hover:-translate-y-0.5 hover:border-sand-400 hover:bg-sand-50;
+    @apply active:translate-y-0;
+    @apply dark:border-sand-700 dark:bg-sand-900 dark:text-slate-200;
+    @apply dark:hover:bg-sand-800;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-slate-600 hover:bg-sand-100 dark:text-slate-300 dark:hover:bg-sand-800;
+  }
+
+  /**
+   * A destructive action that is not the primary thing on screen.
+   *
+   * Exists because two admin pages were recolouring `btn-primary` and
+   * `btn-secondary` red by hand, which silently threw away the button's
+   * padding and focus behaviour along with its colour.
+   */
+  .btn-danger-ghost {
+    @apply btn text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  /**
+   * The small numeric badge on an icon — unread counts, mostly.
+   *
+   * Four files had each independently arrived at `text-[10px]` with two
+   * different minimum widths. `2xs` is that size, promoted to the scale.
+   */
+  .count-badge {
+    @apply inline-flex h-[1.15rem] min-w-[1.15rem] items-center justify-center;
+    @apply rounded-full px-1 text-2xs font-semibold tabular-nums;
+  }
+
+  /**
+   * A horizontally scrolling row of pills.
+   *
+   * The scrollbar is hidden but the scroll is kept — on a desktop the bar
+   * under a row of pills is visual noise, and the pills themselves plus a
+   * partial pill at the edge are the affordance. `snap-x` makes a swipe
+   * settle on a pill rather than between two.
+   */
+  .pill-row {
+    @apply flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .pill-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /**
+   * One filter pill. `aria-pressed` drives the selected state rather than
+   * a separate class, so the visual and the accessible state cannot drift.
+   */
+  .pill {
+    @apply inline-flex shrink-0 snap-start items-center gap-1.5 rounded-full;
+    @apply border border-sand-300 bg-white px-3.5 py-1.5 text-sm font-medium;
+    @apply text-slate-600 transition-all duration-base ease-smooth;
+    @apply hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-700;
+    @apply dark:border-sand-700 dark:bg-sand-900 dark:text-slate-300;
+    @apply dark:hover:border-brand-800 dark:hover:text-brand-300;
+  }
+
+  .pill[aria-pressed='true'] {
+    @apply border-transparent bg-brand-600 text-white shadow-soft;
+    @apply hover:text-white;
+  }
+}
+
+/* A thin, theme-aware scrollbar. The default light scrollbar on a dark
+   chat pane is jarring enough to look like a bug. */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184 / 0.5) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-400/50;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /**
+   * A gradient scrim under text laid over a photo.
+   *
+   * Without it, a light photo makes white text unreadable and the fix is
+   * usually a hard black band that looks like a bug. This is the one
+   * gradient in the system, and it earns its place by making text legible
+   * rather than by being pretty.
+   */
+  .scrim {
+    background: linear-gradient(
+      to top,
+      rgba(14, 12, 11, 0.85) 0%,
+      rgba(14, 12, 11, 0.45) 45%,
+      transparent 100%
+    );
+  }
+
+  /**
+   * The small frosted chip that sits on a photo — an online dot, a
+   * "Super like" flag.
+   *
+   * Scoped to *over-photo* use, which is the one context where a
+   * translucent fill is the right answer rather than decoration: there is
+   * no surface to sit on, so the chip has to take its contrast from the
+   * image behind it. Everywhere else the app used to blur, it is gone.
+   */
+  .chip-on-photo {
+    @apply border border-white/20 bg-black/35 backdrop-blur-sm;
+  }
+}

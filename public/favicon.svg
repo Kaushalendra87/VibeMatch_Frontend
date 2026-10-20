@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="VibeMatch">
+  <!--
+    The meeting-arcs mark on a solid tile.
+
+    A favicon is not the same problem as the in-app logo. The app mark is a
+    2.4-unit stroke in a 24-unit box, which is right at 24px and silts up
+    below it; a bare stroked glyph also disappears against whichever
+    background the browser chrome happens to use. So the tab icon inverts
+    the relationship: a filled rose tile carries the mark as a white
+    knockout, which keeps both the shape and the brand colour legible at
+    16px, in light and dark chrome alike.
+
+    The rose is brand-600, the same step the app uses for interactive
+    surfaces, so the tab icon and the buttons agree.
+
+    Kept in sync by hand with `src/components/ui/Logo.jsx` — the path below
+    is that component's MARK_PATH, translated into this 32-unit tile.
+  -->
+  <rect width="32" height="32" rx="7" fill="#9d4e59" />
+  <g transform="translate(4 4)">
+    <path
+      d="M 4.4 5.2 Q 6.2 11.6 12 18.6 Q 17.8 11.6 19.6 5.2"
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>

@@ -1,0 +1,43 @@
+# ── Dependencies ─────────────────────────────────────────────────────
+# Never committed. `npm ci` rebuilds it from package-lock.json, which IS
+# committed — that is what makes a build reproducible.
+node_modules/
+
+# ── Build output ─────────────────────────────────────────────────────
+# Vercel builds this from source on every deploy, so committing it would
+# only add a stale copy that can drift from `src/`.
+dist/
+dist-ssr/
+.vite/
+
+# ── Environment ──────────────────────────────────────────────────────
+# `.env.example` is committed and documents every variable; real env files
+# are not. Vite inlines anything prefixed `VITE_` into the bundle, so a
+# committed `.env.local` is a published value, not a local one.
+.env
+.env.*
+!.env.example
+
+# Vite writes these on demand during dev.
+*.local
+
+# ── Testing and coverage ─────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Logs ─────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Editors and OS ───────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
