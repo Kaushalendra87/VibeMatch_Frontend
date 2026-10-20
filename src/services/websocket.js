@@ -133,7 +133,8 @@ export class ReconnectingSocket {
       this.attempts === 0 ? SOCKET_STATE.CONNECTING : SOCKET_STATE.RECONNECTING,
     )
 
-    const socket = new WebSocket(buildUrl(this.path), ['access_token', token])
+    const urlWithToken = `${buildUrl(this.path)}?token=${encodeURIComponent(token || '')}`
+    const socket = new WebSocket(urlWithToken)
     this.socket = socket
 
     socket.onopen = () => {
